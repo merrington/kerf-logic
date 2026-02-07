@@ -83,24 +83,24 @@ export interface Project {
 
 export const DEFAULT_SETTINGS: ProjectSettings = {
   unitSystem: 'imperial',
-  sawKerf: 0.125,
+  sawKerf: 3.175, // 1/8" in mm
   allowRotation: true,
   optimizationPriority: 'minimizeSheets',
   cutType: 'guillotine',
-  edgeMargin: 0.25,
+  edgeMargin: 6.35, // 1/4" in mm
 };
 
 export const MATERIAL_PRESETS: Omit<Material, 'id'>[] = [
   {
     name: '4×8 Plywood Sheet',
-    sheetSize: { length: 96, width: 48 },
+    sheetSize: { length: 2438.4, width: 1219.2 }, // 96" × 48" in mm
   },
   {
     name: '5×5 Baltic Birch',
-    sheetSize: { length: 60, width: 60 },
+    sheetSize: { length: 1524, width: 1524 }, // 60" × 60" in mm
   },
   {
     name: '4×4 Plywood Sheet',
-    sheetSize: { length: 48, width: 48 },
+    sheetSize: { length: 1219.2, width: 1219.2 }, // 48" × 48" in mm
   },
 ];
