@@ -3,6 +3,22 @@ import type { Project, Material, CutPiece, ProjectSettings } from '../types';
 import { DEFAULT_SETTINGS } from '../types';
 import { loadProjects, saveProjects, loadCurrentProjectId, saveCurrentProject } from '../utils/storage';
 
+function createProjectsListStore() {
+  const { subscribe, set } = writable<Project[]>(loadProjects());
+
+  return {
+    subscribe,
+    refresh: () => set(loadProjects()),
+    deleteProject: (id: string) => {
+      const projects = loadProjects().filter(p => p.id !== id);
+      saveProjects(projects);
+      set(projects);
+    },
+  };
+}
+
+const projectsList = createProjectsListStore();
+
 function createProjectStore() {
   const { subscribe, set, update } = writable<Project | null>(null);
   
@@ -97,11 +113,23 @@ function createProjectStore() {
     updateSettings: (settings: Partial<ProjectSettings>) => {
       update(p => {
         if (!p) return p;
-        return {
+        const updated = {
           ...p,
           settings: { ...p.settings, ...settings },
           updatedAt: new Date(),
         };
+        // Persist settings changes immediately
+        const projects = loadProjects();
+        const existingIndex = projects.findIndex(proj => proj.id === updated.id);
+        if (existingIndex >= 0) {
+          projects[existingIndex] = updated;
+        } else {
+          projects.push(updated);
+        }
+        saveProjects(projects);
+        // Refresh projectsList to reflect changes
+        projectsList.refresh();
+        return updated;
       });
     },
     save: () => {
@@ -123,22 +151,8 @@ function createProjectStore() {
   };
 }
 
-function createProjectsListStore() {
-  const { subscribe, set } = writable<Project[]>(loadProjects());
-  
-  return {
-    subscribe,
-    refresh: () => set(loadProjects()),
-    deleteProject: (id: string) => {
-      const projects = loadProjects().filter(p => p.id !== id);
-      saveProjects(projects);
-      set(projects);
-    },
-  };
-}
-
 export const currentProject = createProjectStore();
-export const projectsList = createProjectsListStore();
+export { projectsList };
 
 export const materials = derived(currentProject, $project => $project?.materials ?? []);
 export const pieces = derived(currentProject, $project => $project?.pieces ?? []);

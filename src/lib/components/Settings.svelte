@@ -3,13 +3,17 @@
   import { formatDimension, parseDimension } from '../utils/units';
   import type { UnitSystem, OptimizationPriority } from '../types';
   
-  let kerfInput = $state(formatDimension($settings.sawKerf, $settings.unitSystem));
-  let marginInput = $state(formatDimension($settings.edgeMargin, $settings.unitSystem));
+  let kerfInput = $state('');
+  let marginInput = $state('');
+  
+  // Keep inputs in sync with settings (e.g., when switching projects)
+  $effect(() => {
+    kerfInput = formatDimension($settings.sawKerf, $settings.unitSystem);
+    marginInput = formatDimension($settings.edgeMargin, $settings.unitSystem);
+  });
   
   function updateUnitSystem(unitSystem: UnitSystem) {
     currentProject.updateSettings({ unitSystem });
-    kerfInput = formatDimension($settings.sawKerf, unitSystem);
-    marginInput = formatDimension($settings.edgeMargin, unitSystem);
   }
   
   function updateKerf() {

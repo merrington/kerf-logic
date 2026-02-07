@@ -181,6 +181,98 @@ describe('Project Store', () => {
     });
   });
 
+  describe('updateSettings', () => {
+    it('should update project settings', () => {
+      currentProject.createNew('Settings Test');
+
+      currentProject.updateSettings({ unitSystem: 'metric' });
+
+      const current = get(currentProject);
+      expect(current?.settings.unitSystem).toBe('metric');
+    });
+
+    it('should persist settings to localStorage immediately', () => {
+      currentProject.createNew('Persistence Test');
+
+      currentProject.updateSettings({
+        unitSystem: 'metric',
+        sawKerf: 5,
+        edgeMargin: 10,
+      });
+
+      const savedProjects = loadProjects();
+      expect(savedProjects).toHaveLength(1);
+      expect(savedProjects[0].settings.unitSystem).toBe('metric');
+      expect(savedProjects[0].settings.sawKerf).toBe(5);
+      expect(savedProjects[0].settings.edgeMargin).toBe(10);
+    });
+
+    it('should update updatedAt timestamp', () => {
+      const project = currentProject.createNew('Timestamp Test');
+      const originalUpdatedAt = project.updatedAt;
+
+      // Wait a tiny bit to ensure timestamp changes
+      setTimeout(() => {
+        currentProject.updateSettings({ allowRotation: false });
+
+        const current = get(currentProject);
+        expect(current?.updatedAt.getTime()).toBeGreaterThan(originalUpdatedAt.getTime());
+      }, 10);
+    });
+
+    it('should refresh projectsList when settings are updated', () => {
+      currentProject.createNew('Refresh Test');
+
+      // Get initial projects list
+      projectsList.refresh();
+      let projects = get(projectsList);
+      expect(projects[0].settings.unitSystem).toBe('imperial');
+
+      // Update settings
+      currentProject.updateSettings({ unitSystem: 'metric' });
+
+      // Verify projectsList was refreshed
+      projects = get(projectsList);
+      expect(projects[0].settings.unitSystem).toBe('metric');
+    });
+
+    it('should maintain separate settings for different projects', () => {
+      // Create project 1 and update its settings
+      currentProject.createNew('Project 1');
+      currentProject.updateSettings({ unitSystem: 'metric', sawKerf: 5 });
+
+      // Create project 2 and update its settings  
+      currentProject.createNew('Project 2');
+      currentProject.updateSettings({ unitSystem: 'imperial', sawKerf: 3.175 });
+
+      // Load both projects from storage to get fresh copies
+      const savedProjects = loadProjects();
+      expect(savedProjects).toHaveLength(2);
+      
+      // Find projects by name
+      const proj1 = savedProjects.find(p => p.name === 'Project 1')!;
+      const proj2 = savedProjects.find(p => p.name === 'Project 2')!;
+
+      // Verify they have different settings
+      expect(proj1.settings.unitSystem).toBe('metric');
+      expect(proj1.settings.sawKerf).toBe(5);
+      expect(proj2.settings.unitSystem).toBe('imperial');
+      expect(proj2.settings.sawKerf).toBe(3.175);
+
+      // Load project 1 and verify settings display correctly
+      currentProject.loadProject(proj1);
+      let current = get(currentProject);
+      expect(current?.settings.unitSystem).toBe('metric');
+      expect(current?.settings.sawKerf).toBe(5);
+
+      // Load project 2 and verify settings display correctly
+      currentProject.loadProject(proj2);
+      current = get(currentProject);
+      expect(current?.settings.unitSystem).toBe('imperial');
+      expect(current?.settings.sawKerf).toBe(3.175);
+    });
+  });
+
   describe('projectsList', () => {
     it('should list all saved projects', () => {
       currentProject.createNew('Project Alpha');

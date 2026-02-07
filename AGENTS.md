@@ -173,6 +173,44 @@ src/
 - Project state is persisted to localStorage via `storage.ts`
 - Store methods update state immutably
 
+## Testing Requirements
+
+After making changes to functionality, you MUST:
+
+1. **Add or update tests** for the new/changed functionality
+2. **Run all tests** to ensure nothing is broken: `npm test -- --run`
+3. **Run type checking**: `npm run check`
+
+### Test Coverage Guidelines
+
+- **Stores**: Add tests for any new store methods or changed behavior in `src/lib/stores/*.test.ts`
+- **Utils**: Each utility function should have corresponding tests in `src/lib/utils/*.test.ts`
+- **Algorithms**: Complex logic like cut calculations needs thorough tests in `src/lib/algorithms/*.test.ts`
+
+### Test Organization
+
+```typescript
+import { describe, it, expect } from "vitest";
+
+describe("Feature Name", () => {
+  describe("methodName", () => {
+    it("should do something specific", () => {
+      // Test implementation
+    });
+
+    it("should handle edge case", () => {
+      // Test edge case
+    });
+  });
+});
+```
+
+### Before Committing Checklist
+
+- [ ] Tests added/updated for changed functionality
+- [ ] All tests pass: `npm test -- --run`
+- [ ] Type checking passes: `npm run check`
+
 ## Type Safety
 
 - Run `npm run check` before committing
