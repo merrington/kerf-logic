@@ -22,6 +22,12 @@ function createProjectStore() {
       };
       set(project);
       saveCurrentProject(project.id);
+      
+      // Add to projects list
+      const projects = loadProjects();
+      projects.push(project);
+      saveProjects(projects);
+      
       return project;
     },
     loadProject: (project: Project) => {

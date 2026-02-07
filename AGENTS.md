@@ -54,7 +54,7 @@ Always use Svelte 5 runes:
 
 ```typescript
 // State
-let name = $state('');
+let name = $state("");
 let count = $state(0);
 
 // Props with interface
@@ -68,29 +68,29 @@ let { material = null, onSave }: Props = $props();
 let totalArea = $derived(width * height);
 
 // Store subscriptions (existing stores still use $)
-$settings.unitSystem
+$settings.unitSystem;
 ```
 
 ### Imports
 
 ```typescript
 // 1. External libraries
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
 // 2. Svelte imports
-import { onMount } from 'svelte';
+import { onMount } from "svelte";
 
 // 3. Type imports
-import type { Material, CutPiece } from '../types';
+import type { Material, CutPiece } from "../types";
 
 // 4. Component imports
-import MaterialForm from './MaterialForm.svelte';
+import MaterialForm from "./MaterialForm.svelte";
 
 // 5. Utility imports
-import { formatDimension } from '../utils/units';
+import { formatDimension } from "../utils/units";
 
 // 6. Store imports
-import { settings, currentProject } from '../stores/project';
+import { settings, currentProject } from "../stores/project";
 ```
 
 ### Error Handling
@@ -99,19 +99,19 @@ Use early returns with user-friendly error messages:
 
 ```typescript
 function handleSubmit() {
-  error = '';
-  
+  error = "";
+
   if (!name.trim()) {
-    error = 'Material name is required';
+    error = "Material name is required";
     return;
   }
-  
+
   const value = parseDimension(input, unit);
   if (value === null || value <= 0) {
-    error = 'Invalid dimension';
+    error = "Invalid dimension";
     return;
   }
-  
+
   // Proceed with valid data
 }
 ```
@@ -119,17 +119,17 @@ function handleSubmit() {
 ### Testing Patterns
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import { formatDimension } from './units';
+import { describe, it, expect } from "vitest";
+import { formatDimension } from "./units";
 
-describe('Unit Conversion', () => {
-  describe('formatDimension', () => {
-    it('should format metric dimensions', () => {
-      expect(formatDimension(100, 'metric')).toBe('100mm');
+describe("Unit Conversion", () => {
+  describe("formatDimension", () => {
+    it("should format metric dimensions", () => {
+      expect(formatDimension(100, "metric")).toBe("100mm");
     });
-    
-    it('should format imperial fractions', () => {
-      expect(formatDimension(38.1, 'imperial')).toBe('1 1/2"');
+
+    it("should format imperial fractions", () => {
+      expect(formatDimension(38.1, "imperial")).toBe('1 1/2"');
     });
   });
 });

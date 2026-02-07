@@ -8,6 +8,7 @@
   import CutDiagram from './lib/components/CutDiagram.svelte';
   import BOMDisplay from './lib/components/BOMDisplay.svelte';
   import Settings from './lib/components/Settings.svelte';
+  import ProjectManager from './lib/components/ProjectManager.svelte';
   
   let layout = $state<CutLayout | null>(null);
   let isCalculating = $state(false);
@@ -56,6 +57,7 @@
             onchange={(e) => updateProjectName(e.currentTarget.value)}
             class="px-3 py-1 border border-gray-300 rounded-md text-sm"
           />
+          <ProjectManager />
           <button
             onclick={calculateLayout}
             disabled={$materials.length === 0 || $pieces.length === 0 || isCalculating}

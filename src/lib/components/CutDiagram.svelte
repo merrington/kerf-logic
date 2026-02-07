@@ -23,6 +23,10 @@
   function getPieceColor(index: number): string {
     return colors[index % colors.length];
   }
+
+  function getPieceName(pieceId: string): string {
+    return pieces.find(p => p.id === pieceId)?.name ?? 'Unknown';
+  }
 </script>
 
 <div class="bg-white rounded-lg shadow-md p-6">
@@ -87,7 +91,7 @@
                       font-size="3"
                       font-weight="bold"
                     >
-                      {formatDimension(piece.height, $settings.unitSystem)} × {formatDimension(piece.width, $settings.unitSystem)}
+                      {getPieceName(piece.pieceId)}
                     </text>
                   {/if}
                 </g>
@@ -113,7 +117,7 @@
             {#each sheet.pieces as piece, pieceIdx}
               <div class="flex items-center gap-1">
                 <div class="w-4 h-4 rounded" style="background-color: {getPieceColor(pieceIdx)}"></div>
-                <span>#{pieceIdx + 1} ({formatDimension(piece.height, $settings.unitSystem)} × {formatDimension(piece.width, $settings.unitSystem)})</span>
+                <span>{getPieceName(piece.pieceId)} ({formatDimension(piece.height, $settings.unitSystem)} × {formatDimension(piece.width, $settings.unitSystem)})</span>
               </div>
             {/each}
           </div>
